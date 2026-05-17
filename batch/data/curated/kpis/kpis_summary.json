@@ -1,0 +1,80 @@
+{
+    "total_tickets": 5878,
+    "total_incidents": 5046,
+    "total_demandes": 832,
+    "open_tickets": 121,
+    "closed_tickets": 5737,
+    "tickets_without_closed_date": 144,
+    "average_resolution_time_hours": 27.995998612566456,
+    "median_resolution_time_hours": 0.07222222222222222,
+    "long_resolution_rate": 12.18101395032324,
+    "tickets_by_type": {
+        "Incident": 5046,
+        "Demande": 832
+    },
+    "tickets_by_status": {
+        "Closed": 5542,
+        "Open": 213,
+        "Other": 123
+    },
+    "tickets_by_priority": {
+        "4": 2586,
+        "5": 1211,
+        "3": 1087,
+        "2": 88,
+        "1": 74
+    },
+    "tickets_by_urgency": {
+        "2 - Moyenne": 2833,
+        "3 - Faible": 1333,
+        "1 - Haute": 880
+    },
+    "tickets_by_category_top10": {
+        "Logiciel": 2490,
+        "Application métier": 955,
+        "Systéme": 685,
+        "Matériel": 591,
+        "Logiciel Bureautique": 418,
+        "Portail": 280,
+        "Réseau": 177,
+        "06_Reporting": 108,
+        "Défense": 67,
+        "Sécurité": 43
+    },
+    "tickets_by_resolver_group_top10": {
+        "HD1_FRONT": 3626,
+        "HD2_SUPPORT": 292,
+        "HD3_BUR / GESTION DE PARC": 265,
+        "HD3_AX_EXPENSYA": 254,
+        "HD3 – référentiel clients": 182,
+        "HD1_kiosqueIT": 163,
+        "HD3_ITEX & EDITIQUE": 91,
+        "HD3_BU_CORPORATE_FINANCE": 72,
+        "HD3_SECURITE": 56,
+        "HD3_ITEX MOBILE/PHONE": 54
+    },
+    "tickets_by_location_top10": {
+        "-": 1775,
+        "BOURGES CNG": 281,
+        "ORLEANS": 242,
+        "BORDEAUX": 174,
+        "AVIGNON": 159,
+        "NANTES": 156,
+        "ROUEN": 148,
+        "DIJON": 138,
+        "ORLEANS CNG": 135,
+        "TOULOUSE": 119
+    },
+    "tickets_by_entity_top10": {
+        "TEXA": 2232,
+        "TEXA SERVICES": 928,
+        "GMC": 399,
+        "PHENIX": 381,
+        "EURISK": 305,
+        "VOXENS": 283,
+        "CLE": 235,
+        "EXTERNE": 177,
+        "TGS": 176,
+        "GEOP": 144
+    }
+}

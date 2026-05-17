@@ -1,0 +1,49 @@
+# ── Secrets ───────────────────────────────────────────────────────────────────
+.env
+*.key
+*.pem
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+env/
+
+# ── ML models (large binaries) ────────────────────────────────────────────────
+*.joblib
+*.pkl
+*.pickle
+streaming/ml/models/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+airflow/logs/
+
+# ── Docker volumes / runtime data ─────────────────────────────────────────────
+postgres_data/
+mariadb_data/
+glpi_data/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+test_dup.py
+spec_extracted.txt
+Cahier_des_Charges_PFE_ITSM_Amal_El_Machichi-4.docx

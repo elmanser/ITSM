@@ -1,0 +1,311 @@
+category_full,category_level_1,category_level_2,category_level_3,category_level_4,category_id
+Incidents/Matériel/Informatiques/Clavier,Incidents,Matériel,Informatiques,Clavier,1
+Incidents/Portail,Incidents,Portail,,,2
+Incidents/Systéme/Windows/Probléme de connexion,Incidents,Systéme,Windows,Probléme de connexion,3
+Incidents/Réseau/Wifi,Incidents,Réseau,Wifi,,4
+Incidents/Application métier/Legacy/Probléme de connexion,Incidents,Application métier,Legacy,Probléme de connexion,5
+Incidents/Sécurité/MFA/Utilisation,Incidents,Sécurité,MFA,Utilisation,6
+Incidents/Application métier/Avensys/Problème de connexion,Incidents,Application métier,Avensys,Problème de connexion,7
+Incidents/Application métier/Ringover/Problème de connexion,Incidents,Application métier,Ringover,Problème de connexion,8
+"Incidents/Logiciel Bureautique/Office365/PackOffice(Word,Excel,PowerPoint ...)",Incidents,Logiciel Bureautique,Office365,"PackOffice(Word,Excel,PowerPoint ...)",9
+Incidents/Application métier/ITEX/Dysfonctionnement,Incidents,Application métier,ITEX,Dysfonctionnement,10
+Incidents/Matériel/Informatiques/PC-Portable/Dysfonctionnement,Incidents,Matériel,Informatiques,PC-Portable,11
+Incidents/Sécurité/MFA/Dysfonctionnement,Incidents,Sécurité,MFA,Dysfonctionnement,12
+Incidents/Systéme/Windows/Logiciel/VPN/Probléme de connexion,Incidents,Systéme,Windows,Logiciel,13
+Incidents/Systéme/Windows/Dysfonctionnement,Incidents,Systéme,Windows,Dysfonctionnement,14
+Incidents/Logiciel Bureautique/PDF-Exchange/Dysfonctionnement,Incidents,Logiciel Bureautique,PDF-Exchange,Dysfonctionnement,15
+Incidents/Sécurité/MFA/Probléme de connexion,Incidents,Sécurité,MFA,Probléme de connexion,16
+Incidents/Matériel/Informatiques/Écran,Incidents,Matériel,Informatiques,Écran,17
+Incidents/Application métier/MICROSOFT DYNAMICS AX,Incidents,Application métier,MICROSOFT DYNAMICS AX,,18
+Incidents/Sécurité/Filtrage URL,Incidents,Sécurité,Filtrage URL,,19
+Incidents/Logiciel Bureautique/Office365/Outlook,Incidents,Logiciel Bureautique,Office365,Outlook,20
+Incidents/Réseau/Mobile/Carte data,Incidents,Réseau,Mobile,Carte data,21
+Incidents/Application métier/ITEX MOBILE/Dysfonctionnement,Incidents,Application métier,ITEX MOBILE,Dysfonctionnement,22
+Incidents/Systéme/Windows Serveur/Pb de connexion,Incidents,Systéme,Windows Serveur,Pb de connexion,23
+Incidents/Application métier/Ringover/Dysfonctionnement,Incidents,Application métier,Ringover,Dysfonctionnement,24
+Incidents/Logiciel Bureautique/Office365/Sharepoint,Incidents,Logiciel Bureautique,Office365,Sharepoint,25
+Incidents/Application métier/ITEX MOBILE/Problème de connexion,Incidents,Application métier,ITEX MOBILE,Problème de connexion,26
+Incidents/Application métier/Expensya/Pb de connexion,Incidents,Application métier,Expensya,Pb de connexion,27
+Incidents/Matériel/Informatiques/Tablette/Dysfonctionnement,Incidents,Matériel,Informatiques,Tablette,28
+Incidents/Application métier/ESKER/Dysfonctionnement,Incidents,Application métier,ESKER,Dysfonctionnement,29
+Incidents/Logiciel Bureautique/Office365/Teams,Incidents,Logiciel Bureautique,Office365,Teams,30
+Incidents/Application métier/SINERGIE/Problème de connexion,Incidents,Application métier,SINERGIE,Problème de connexion,31
+Incidents/Systéme/Windows/Logiciel/VPN/Dysfonctionnement,Incidents,Systéme,Windows,Logiciel,32
+Incidents/Matériel/Informatiques/PC-Fixe/Dysfonctionnement,Incidents,Matériel,Informatiques,PC-Fixe,33
+Incidents/Application métier/ITEX/Bug Applicatif,Incidents,Application métier,ITEX,Bug Applicatif,34
+Incidents/Application métier/ITEX MOBILE/Bug Applicatif,Incidents,Application métier,ITEX MOBILE,Bug Applicatif,35
+Incidents/Application métier/Avensys/Bug Applicatif,Incidents,Application métier,Avensys,Bug Applicatif,36
+Incidents/Application métier/MICROSOFT DYNAMICS AX/Bug Applicatif,Incidents,Application métier,MICROSOFT DYNAMICS AX,Bug Applicatif,37
+Incidents/Sécurité/Alerte Sentinel,Incidents,Sécurité,Alerte Sentinel,,38
+Incidents/Application métier/Sinapps/Dysfonctionnement,Incidents,Application métier,Sinapps,Dysfonctionnement,39
+Incidents/Application métier/CASSIOPEE/Problème de connexion,Incidents,Application métier,CASSIOPEE,Problème de connexion,40
+Incidents/Application métier/ITEX/Problème de connexion,Incidents,Application métier,ITEX,Problème de connexion,41
+Incidents/Application métier/Soluce/Problème de connexion,Incidents,Application métier,Soluce,Problème de connexion,42
+Incidents/Logiciel Bureautique/Office365/OneDrive,Incidents,Logiciel Bureautique,Office365,OneDrive,43
+Incidents/Application métier/OPTIM/Dysfonctionnement,Incidents,Application métier,OPTIM,Dysfonctionnement,44
+Incidents/Systéme/Windows Serveur/Utilisation,Incidents,Systéme,Windows Serveur,Utilisation,45
+Incidents/Logiciel Bureautique/PDF-Exchange/Bug Applicatif,Incidents,Logiciel Bureautique,PDF-Exchange,Bug Applicatif,46
+Incidents/Application métier/ESKER/Problème de connexion,Incidents,Application métier,ESKER,Problème de connexion,47
+Incidents/Systéme/Windows/Utilisation,Incidents,Systéme,Windows,Utilisation,48
+Incidents/Application métier/MICROSOFT DYNAMICS AX/Dysfonctionnement,Incidents,Application métier,MICROSOFT DYNAMICS AX,Dysfonctionnement,49
+Incidents/Matériel/Informatiques/PC-Portable/Utilisation,Incidents,Matériel,Informatiques,PC-Portable,50
+Incidents/Matériel/Informatiques/Station d'acceuil,Incidents,Matériel,Informatiques,Station d'acceuil,51
+Incidents/Application métier/GMC Soft,Incidents,Application métier,GMC Soft,,52
+Incidents/Application métier/Avensys/Dysfonctionnment,Incidents,Application métier,Avensys,Dysfonctionnment,53
+Incidents/Application métier/MICROSOFT DYNAMICS AX/Problème de connexion,Incidents,Application métier,MICROSOFT DYNAMICS AX,Problème de connexion,54
+Incidents/Systéme/Windows Serveur/Dysfonctionnement,Incidents,Systéme,Windows Serveur,Dysfonctionnement,55
+Incidents/Application métier/ITEX/Utilisation,Incidents,Application métier,ITEX,Utilisation,56
+Incidents/Systéme/Windows/Logiciel/VPN/Bug Applicatif,Incidents,Systéme,Windows,Logiciel,57
+Incidents/Réseau/Cablage,Incidents,Réseau,Cablage,,58
+Incidents/Matériel/Informatiques/Casques,Incidents,Matériel,Informatiques,Casques,59
+Incidents/Matériel/Imprimante,Incidents,Matériel,Imprimante,,60
+Incidents/Matériel/Informatiques/PC-Fixe/Utilisation,Incidents,Matériel,Informatiques,PC-Fixe,61
+Incidents/Application métier/ESKER/Bug Applicatif,Incidents,Application métier,ESKER,Bug Applicatif,62
+Incidents/Application métier/SINERGIE/Dysfonctionnement,Incidents,Application métier,SINERGIE,Dysfonctionnement,63
+Incidents/Application métier/Ringover/Bug Applicatif,Incidents,Application métier,Ringover,Bug Applicatif,64
+Incidents/Application métier/ESKER/Utilisation,Incidents,Application métier,ESKER,Utilisation,65
+Incidents/Logiciel/Bureautique/Office 365/One drive,Incidents,Logiciel,Bureautique,Office 365,66
+Incidents/Systéme/Windows Serveur,Incidents,Systéme,Windows Serveur,,67
+Incidents/Application métier/MICROSOFT DYNAMICS AX/Utilisation,Incidents,Application métier,MICROSOFT DYNAMICS AX,Utilisation,68
+Incidents/Sécurité/MFA,Incidents,Sécurité,MFA,,69
+Incidents/Application métier/SALESFORCE/Bug Applicatif,Incidents,Application métier,SALESFORCE,Bug Applicatif,70
+Incidents/Systéme/Windows/Bug Applicatif,Incidents,Systéme,Windows,Bug Applicatif,71
+Incidents/Application métier/OPTIM/Problème de connexion,Incidents,Application métier,OPTIM,Problème de connexion,72
+Incidents/Matériel/Informatiques/Cable,Incidents,Matériel,Informatiques,Cable,73
+Incidents/Logiciel/Bureautique/Communication/Outlook,Incidents,Logiciel,Bureautique,Communication,74
+Incidents/Application métier/CASSIOPEE/Dysfonctionnement,Incidents,Application métier,CASSIOPEE,Dysfonctionnement,75
+Incidents/Application métier/Expensya/Utilisation,Incidents,Application métier,Expensya,Utilisation,76
+Incidents/Application métier/Expensya/Dysfonctionnement,Incidents,Application métier,Expensya,Dysfonctionnement,77
+Incidents/Réseau/Locale,Incidents,Réseau,Locale,,78
+Incidents/Application métier/VEOS/Utilisation,Incidents,Application métier,VEOS,Utilisation,79
+Incidents/Matériel/Informatiques/Tablette/Utilisation,Incidents,Matériel,Informatiques,Tablette,80
+Incidents/Systéme/Windows/Logiciel/VPN,Incidents,Systéme,Windows,Logiciel,81
+Incidents/Application métier/TALENTIA CPM/Utilisation,Incidents,Application métier,TALENTIA CPM,Utilisation,82
+Incidents/Application métier/ASANA/Utilisation,Incidents,Application métier,ASANA,Utilisation,83
+Incidents/Application métier/SO HORSYS,Incidents,Application métier,SO HORSYS,,84
+Incidents/Application métier/Ringover/Utilisation,Incidents,Application métier,Ringover,Utilisation,85
+Incidents/Matériel/Informatiques/Tablette,Incidents,Matériel,Informatiques,Tablette,86
+Incidents/Logiciel Bureautique/PDF-Exchange/Utilisation,Incidents,Logiciel Bureautique,PDF-Exchange,Utilisation,87
+Incidents/Réseau/Mobile,Incidents,Réseau,Mobile,,88
+Incidents/Application métier/Darva,Incidents,Application métier,Darva,,89
+Incidents/Application métier/TALENTIA/Problème de connexion,Incidents,Application métier,TALENTIA,Problème de connexion,90
+Incidents/Application métier/SINERGIE/Utilisation,Incidents,Application métier,SINERGIE,Utilisation,91
+Incidents/Systéme/Windows/Logiciel/VPN/Utilisation,Incidents,Systéme,Windows,Logiciel,92
+Incidents/Application métier/SAGE X3/Problème de connexion,Incidents,Application métier,SAGE X3,Problème de connexion,93
+Incidents/Application métier/ZENDESK/Utilisation,Incidents,Application métier,ZENDESK,Utilisation,94
+Incidents/Application métier/OPTIM/Utilisation,Incidents,Application métier,OPTIM,Utilisation,95
+Incidents/Application métier/Avensys/Utilisation,Incidents,Application métier,Avensys,Utilisation,96
+Incidents/Application métier/ZENDESK/Dysfonctionnement,Incidents,Application métier,ZENDESK,Dysfonctionnement,97
+Incidents/Logiciel Bureautique/Dragon/Probléme de connexion,Incidents,Logiciel Bureautique,Dragon,Probléme de connexion,98
+Incidents/Application métier/OPTIM/Bug Applicatif,Incidents,Application métier,OPTIM,Bug Applicatif,99
+Incidents/Application métier/YOOZ/Bug Applicatif,Incidents,Application métier,YOOZ,Bug Applicatif,100
+Incidents/Application métier/gREN/Bug Applicatif,Incidents,Application métier,gREN,Bug Applicatif,101
+Incidents/Application métier/BI - QLIK/Problème de connexion,Incidents,Application métier,BI - QLIK,Problème de connexion,102
+Incidents/Application métier/ITEX MOBILE/Utilisation,Incidents,Application métier,ITEX MOBILE,Utilisation,103
+Incidents/Application métier/gREN/Problème de connexion,Incidents,Application métier,gREN,Problème de connexion,104
+Incidents/Sécurité/MFA/Bug Applicatif,Incidents,Sécurité,MFA,Bug Applicatif,105
+Incidents/Application métier/ASANA/Problème de connexion,Incidents,Application métier,ASANA,Problème de connexion,106
+Incidents/Application métier/Sinapps,Incidents,Application métier,Sinapps,,107
+Incidents/Application métier/ZENDESK/Bug Applicatif,Incidents,Application métier,ZENDESK,Bug Applicatif,108
+Incidents/Logiciel Bureautique/Dragon/Dysfonctionnement,Incidents,Logiciel Bureautique,Dragon,Dysfonctionnement,109
+Incidents/Application métier/Editique Courrier/Dysfonctionnement,Incidents,Application métier,Editique Courrier,Dysfonctionnement,110
+Incidents/Matériel/Informatiques/PC-Portable,Incidents,Matériel,Informatiques,PC-Portable,111
+Incidents/Application métier/Legacy,Incidents,Application métier,Legacy,,112
+Incidents/Matériel/Informatiques/Souris,Incidents,Matériel,Informatiques,Souris,113
+Incidents/Application métier/Soluce/Utilisation,Incidents,Application métier,Soluce,Utilisation,114
+Incidents/Application métier/Extranet Assureur/Dysfonctionnement,Incidents,Application métier,Extranet Assureur,Dysfonctionnement,115
+Incidents/Matériel/Informatiques/PC-Fixe,Incidents,Matériel,Informatiques,PC-Fixe,116
+Incidents/Application métier/Soluce/Bug Applicatif,Incidents,Application métier,Soluce,Bug Applicatif,117
+Incidents/Application métier/ZENDESK/Problème de connexion,Incidents,Application métier,ZENDESK,Problème de connexion,118
+Incidents/Logiciel Bureautique/Office365,Incidents,Logiciel Bureautique,Office365,,119
+Incidents/Application métier/Editique Courrier/Bug Applicatif,Incidents,Application métier,Editique Courrier,Bug Applicatif,120
+Incidents/Application métier/CASSIOPEE/Utilisation,Incidents,Application métier,CASSIOPEE,Utilisation,121
+Incidents/Logiciel/Métier/Portail RH Zendesk,Incidents,Logiciel,Métier,Portail RH Zendesk,122
+Incidents/Logiciel/Bureautique/Compte bloqué,Incidents,Logiciel,Bureautique,Compte bloqué,123
+Incidents/Logiciel/Métier/Référentiel,Incidents,Logiciel,Métier,Référentiel,124
+Incidents/Logiciel/Métier/AX/Autre Pb AX,Incidents,Logiciel,Métier,AX,125
+Incidents/Logiciel/Bureautique/Téléphonie/Ringover,Incidents,Logiciel,Bureautique,Téléphonie,126
+Incidents/Logiciel/Métier/Itex-Mobile/Missions,Incidents,Logiciel,Métier,Itex-Mobile,127
+Incidents/Matériel/Poste de travail/PC Portable,Incidents,Matériel,Poste de travail,PC Portable,128
+Incidents/Matériel/Poste de travail/Dictaphone,Incidents,Matériel,Poste de travail,Dictaphone,129
+Incidents/Logiciel/Bureautique/Téléphonie/Ringover/Autre Pb Ringover,Incidents,Logiciel,Bureautique,Téléphonie,130
+Incidents/Logiciel/Bureautique/Bureau virtuel - RDS,Incidents,Logiciel,Bureautique,Bureau virtuel - RDS,131
+Incidents/Logiciel/Bureautique/VPN,Incidents,Logiciel,Bureautique,VPN,132
+Incidents/Logiciel/Bureautique/Téléphonie/Ringover/Problème de page blanche,Incidents,Logiciel,Bureautique,Téléphonie,133
+Incidents/Logiciel/Métier/ITEX/Erreur à l'enregistrement,Incidents,Logiciel,Métier,ITEX,134
+Incidents/Logiciel/Métier/ITEX/Erreur E-Crac,Incidents,Logiciel,Métier,ITEX,135
+Incidents/Logiciel/Métier/Optimisation de Tournées/Divers - Optimisation de Tournées,Incidents,Logiciel,Métier,Optimisation de Tournées,136
+Incidents/Réseau/Carte 3G-4G,Incidents,Réseau,Carte 3G-4G,,137
+Incidents/Logiciel/Métier/Epost/Simplissimo,Incidents,Logiciel,Métier,Epost,138
+Incidents/Logiciel/Métier/Itex-Mobile/Actions,Incidents,Logiciel,Métier,Itex-Mobile,139
+Incidents/Logiciel/Bureautique/Windows,Incidents,Logiciel,Bureautique,Windows,140
+Incidents/Logiciel/Métier/ITEX/Ouverture de documents,Incidents,Logiciel,Métier,ITEX,141
+Incidents/Logiciel/Bureautique/Navigateur Internet,Incidents,Logiciel,Bureautique,Navigateur Internet,142
+Incidents/Matériel/Téléphonie/Mobile/VPN Authenticator suite renouvellement de tel,Incidents,Matériel,Téléphonie,Mobile,143
+Incidents/Réseau/Réseau WIFI,Incidents,Réseau,Réseau WIFI,,144
+Incidents/Matériel/Poste de travail/PC Fixe,Incidents,Matériel,Poste de travail,PC Fixe,145
+Incidents/Matériel/Poste de travail/Ecran - paramétrage,Incidents,Matériel,Poste de travail,Ecran - paramétrage,146
+Incidents/Logiciel/Bureautique/Office 365/Excel,Incidents,Logiciel,Bureautique,Office 365,147
+Incidents/Logiciel/Métier/Avensys/Bug applicatif,Incidents,Logiciel,Métier,Avensys,148
+Incidents/Réseau/Réseau local-câblage,Incidents,Réseau,Réseau local-câblage,,149
+Incidents/Réseau/Filtrage URL,Incidents,Réseau,Filtrage URL,,150
+Incidents/Matériel/Poste de travail/PC Tablette,Incidents,Matériel,Poste de travail,PC Tablette,151
+Incidents/Matériel/Poste de travail/Clavier-souris,Incidents,Matériel,Poste de travail,Clavier-souris,152
+Incidents/Matériel/Téléphonie/Casque,Incidents,Matériel,Téléphonie,Casque,153
+Incidents/Logiciel/Bureautique/Lecteur U _ Synchronisation,Incidents,Logiciel,Bureautique,Lecteur U _ Synchronisation,154
+Incidents/Logiciel/Métier/Sinapps,Incidents,Logiciel,Métier,Sinapps,155
+"Incidents/Logiciel/Métier/AX/Incident technique (Accès application, impression...)",Incidents,Logiciel,Métier,AX,156
+Incidents/Logiciel/Métier/So Horsys,Incidents,Logiciel,Métier,So Horsys,157
+Incidents/Logiciel/Métier/Itex-Mobile/Divers,Incidents,Logiciel,Métier,Itex-Mobile,158
+Incidents/Logiciel/Bureautique/Office 365/Word,Incidents,Logiciel,Bureautique,Office 365,159
+Incidents/Matériel/Poste de travail/Station d'accueil - Réplicateur de ports,Incidents,Matériel,Poste de travail,Station d'accueil - Réplicateur de ports,160
+Incidents/Logiciel/Métier/Avensys/Dysfonctionnement,Incidents,Logiciel,Métier,Avensys,161
+Incidents/Logiciel/Métier/ITEX/Erreur d'enregistrement _ annulation de RDV,Incidents,Logiciel,Métier,ITEX,162
+Incidents/Logiciel/Métier/GMCSoft,Incidents,Logiciel,Métier,GMCSoft,163
+Incidents/Logiciel/Bureautique/Communication/TEAMS,Incidents,Logiciel,Bureautique,Communication,164
+Incidents/Logiciel/Métier/ITEX/Erreur à la qualification,Incidents,Logiciel,Métier,ITEX,165
+Incidents/Logiciel/Métier/SINERGIE/Problème de connexion,Incidents,Logiciel,Métier,SINERGIE,166
+Incidents/Hors périmètre Incident,Incidents,Hors périmètre Incident,,,167
+Incidents/Logiciel/Bureautique/Sécurité/MFA,Incidents,Logiciel,Bureautique,Sécurité,168
+Incidents/Logiciel/Métier/ITEX Construction,Incidents,Logiciel,Métier,ITEX Construction,169
+Incidents/Logiciel/Métier/Itex-Mobile/Formulaire ESS,Incidents,Logiciel,Métier,Itex-Mobile,170
+Incidents/Logiciel/Métier/Salesforce_Asana,Incidents,Logiciel,Métier,Salesforce_Asana,171
+Incidents/Logiciel/Métier/Intranet,Incidents,Logiciel,Métier,Intranet,172
+Incidents/Matériel/Impression,Incidents,Matériel,Impression,,173
+Incidents/Logiciel/Métier/Soluce,Incidents,Logiciel,Métier,Soluce,174
+Incidents/Logiciel/Métier/gREN/Pb de connexion,Incidents,Logiciel,Métier,gREN,175
+Incidents/Logiciel/Métier/Expensya,Incidents,Logiciel,Métier,Expensya,176
+Incidents/Logiciel/Métier/AX/Encaissements - Recouvrements,Incidents,Logiciel,Métier,AX,177
+Incidents/Logiciel/Métier/Cassiopée (Bluekango),Incidents,Logiciel,Métier,Cassiopée (Bluekango),178
+Incidents/Logiciel/Métier/ITEX/Action attribuée à la mauvaise corbeille,Incidents,Logiciel,Métier,ITEX,179
+Incidents/Logiciel/Métier/ITEX/Problème d'accès,Incidents,Logiciel,Métier,ITEX,180
+Incidents/Logiciel/Métier/Yooz/Pb de connexion,Incidents,Logiciel,Métier,Yooz,181
+Incidents/Logiciel/Métier/Itex-Mobile/Génération documents,Incidents,Logiciel,Métier,Itex-Mobile,182
+Incidents/Logiciel/Métier/Yooz/Dysfonctionnement,Incidents,Logiciel,Métier,Yooz,183
+Incidents/Logiciel/Bureautique/Restauration Document,Incidents,Logiciel,Bureautique,Restauration Document,184
+Incidents/Logiciel/Métier/gREN,Incidents,Logiciel,Métier,gREN,185
+Incidents/Logiciel/Métier/ITEX/Groupe EDITIQUE - Contenu de documents erroné,Incidents,Logiciel,Métier,ITEX,186
+Incidents/Logiciel/Métier/Avensys/Pb de connexion,Incidents,Logiciel,Métier,Avensys,187
+Incidents/Matériel/Téléphonie/Mobile,Incidents,Matériel,Téléphonie,Mobile,188
+Incidents/Matériel/Poste de travail/Stylet,Incidents,Matériel,Poste de travail,Stylet,189
+Incidents/Logiciel/Métier/Itex-Mobile/Synchronisation KO,Incidents,Logiciel,Métier,Itex-Mobile,190
+Incidents/Logiciel/Bureautique/Sécurité/EndPoint,Incidents,Logiciel,Bureautique,Sécurité,191
+Incidents/Matériel/Poste de travail/Chargeur secteur,Incidents,Matériel,Poste de travail,Chargeur secteur,192
+Incidents/Logiciel/Métier/Itex-Mobile/Agenda non synchronisé,Incidents,Logiciel,Métier,Itex-Mobile,193
+Incidents/Logiciel/Bureautique/Téléphonie/Ringover/Problème de son,Incidents,Logiciel,Bureautique,Téléphonie,194
+Incidents/Logiciel/Métier/ITEX/Groupe EDITIQUE - Génération de document impossible,Incidents,Logiciel,Métier,ITEX,195
+Incidents/Migration Windows 11/Downgrade en Windows 10,Incidents,Migration Windows 11,Downgrade en Windows 10,,196
+Incidents/Logiciel/Métier/Kyriba,Incidents,Logiciel,Métier,Kyriba,197
+Incidents/Logiciel/Métier/Incident Legacy,Incidents,Logiciel,Métier,Incident Legacy,198
+Incidents/Logiciel/Métier/Opti - Time,Incidents,Logiciel,Métier,Opti - Time,199
+Incidents/Logiciel/Métier/Visiotex/Dysfonctionnement,Incidents,Logiciel,Métier,Visiotex,200
+Incidents/Migration Windows 11/Accompagnement à la migration,Incidents,Migration Windows 11,Accompagnement à la migration,,201
+Incidents/Logiciel/Bureautique/Office 365/Power Point,Incidents,Logiciel,Bureautique,Office 365,202
+Incidents/Logiciel/Métier/Itex-Mobile/Problème de Connexion _ Authentification,Incidents,Logiciel,Métier,Itex-Mobile,203
+Incidents/Logiciel/Métier/Optimisation de Tournées/Rendez-vous non validé,Incidents,Logiciel,Métier,Optimisation de Tournées,204
+Incidents/Logiciel/Bureautique/Hors périmètre,Incidents,Logiciel,Bureautique,Hors périmètre,205
+"Incidents/Logiciel/Métier/ITEX/Non réception données expertise (formulaire, actions, ...)",Incidents,Logiciel,Métier,ITEX,206
+Incidents/Logiciel/Métier/SINERGIE,Incidents,Logiciel,Métier,SINERGIE,207
+Incidents/Logiciel/Métier/Talentia CPM/Dysfonctionnement,Incidents,Logiciel,Métier,Talentia CPM,208
+Incidents/Logiciel/Métier/ITEX/Clic-Droit,Incidents,Logiciel,Métier,ITEX,209
+Incidents/Logiciel/Métier/ITEX/Groupe EDITIQUE - Problème de fusion de documents,Incidents,Logiciel,Métier,ITEX,210
+Incidents/Matériel/Poste de travail/Chargeur allume cigare,Incidents,Matériel,Poste de travail,Chargeur allume cigare,211
+Incidents/Migration Windows 11/Echec de la maj rendant le poste HS,Incidents,Migration Windows 11,Echec de la maj rendant le poste HS,,212
+Incidents/Logiciel/Métier/Talentia CPM/Pb de connexion,Incidents,Logiciel,Métier,Talentia CPM,213
+Incidents/Logiciel/Bureautique/Sécurité/Centre de Synchronisation Windows,Incidents,Logiciel,Bureautique,Sécurité,214
+Incidents/Logiciel/Bureautique/Téléphonie/Akio,Incidents,Logiciel,Bureautique,Téléphonie,215
+Incidents/Logiciel/Métier/EDI,Incidents,Logiciel,Métier,EDI,216
+Incidents/Logiciel/Métier/ITEX/Erreur e-post,Incidents,Logiciel,Métier,ITEX,217
+Incidents/Logiciel/Métier/CRM,Incidents,Logiciel,Métier,CRM,218
+Incidents/Logiciel/Bureautique/Téléphonie/Ringover/Historique incomplet,Incidents,Logiciel,Bureautique,Téléphonie,219
+Incidents/Logiciel/REPORTING,Incidents,Logiciel,REPORTING,,220
+Incidents/Logiciel/Métier/Itex-Mobile/Pièces Jointes,Incidents,Logiciel,Métier,Itex-Mobile,221
+Incidents/Logiciel/Métier/ITEX/Erreur à la clôture,Incidents,Logiciel,Métier,ITEX,222
+Incidents/Logiciel/Métier/Talentia,Incidents,Logiciel,Métier,Talentia,223
+Incidents/Logiciel/Métier/Veos,Incidents,Logiciel,Métier,Veos,224
+Incidents/CarveIn_Sovea/Technoclic,Incidents,CarveIn_Sovea,Technoclic,,225
+Incidents/Logiciel/Bureautique/Téléphonie/Ringover/Problèmes de dispatch des appels,Incidents,Logiciel,Bureautique,Téléphonie,226
+Incidents/Logiciel/Métier/SAGE,Incidents,Logiciel,Métier,SAGE,227
+Incidents/Logiciel/Métier/gREN/Dysfonctionnement,Incidents,Logiciel,Métier,gREN,228
+Demande de service/Application métier/SAGE X3/Création Identification Compte Client,Demande de service,Application métier,SAGE X3,Création Identification Compte Client,229
+Demande de service/Matériel/Equipements Expert/Nouvel humitest,Demande de service,Matériel,Equipements Expert,Nouvel humitest,230
+Demande de service/Matériel/Informatique/Cable d'alimentation,Demande de service,Matériel,Informatique,Cable d'alimentation,231
+Demande de service/Matériel/Informatique/Chargeur allume-cigare,Demande de service,Matériel,Informatique,Chargeur allume-cigare,232
+Demande de service/Application métier/SINERGIE/Demande d'accès,Demande de service,Application métier,SINERGIE,Demande d'accès,233
+Demande de service/Défense/Check salles de réunion,Demande de service,Défense,Check salles de réunion,,234
+Demande de service/Logiciel Bureautique/Windows/Création compte,Demande de service,Logiciel Bureautique,Windows,Création compte,235
+Demande de service/Matériel/Informatique/Pack Télétravail,Demande de service,Matériel,Informatique,Pack Télétravail,236
+Demande de service/Matériel/Informatique/Souris,Demande de service,Matériel,Informatique,Souris,237
+Demande de service/Application métier/SO'HORSYS/Demande d'accès,Demande de service,Application métier,SO'HORSYS,Demande d'accès,238
+Demande de service/Autres,Demande de service,Autres,,,239
+Demande de service/Application métier/MICROSOFT DYNAMICS AX/Demande de paramétrage,Demande de service,Application métier,MICROSOFT DYNAMICS AX,Demande de paramétrage,240
+Demande de service/Application métier/CASSIOPEE/Demande d'accès,Demande de service,Application métier,CASSIOPEE,Demande d'accès,241
+Demande de service/Application métier/SINERGIE,Demande de service,Application métier,SINERGIE,,242
+Demande de service/Application métier,Demande de service,Application métier,,,243
+Demande de service/Logiciel Bureautique/Office365/Outlook/Ajout de droit d’accès à une BAL partagée,Demande de service,Logiciel Bureautique,Office365,Outlook,244
+Demande de service/Logiciel Bureautique/Windows/Accés Répertoire partagé,Demande de service,Logiciel Bureautique,Windows,Accés Répertoire partagé,245
+Demande de service/Logiciel Bureautique/PDF-Exchange/Demande d'accès,Demande de service,Logiciel Bureautique,PDF-Exchange,Demande d'accès,246
+Demande de service/Logiciel Bureautique/Office365/Outlook/Messagerie - Message d'absence,Demande de service,Logiciel Bureautique,Office365,Outlook,247
+Demande de service/Matériel/Informatique/Kit d'arrivée,Demande de service,Matériel,Informatique,Kit d'arrivée,248
+Demande de service/Application métier/ITEX,Demande de service,Application métier,ITEX,,249
+Demande de service/Application métier/Ringover/Demande d'accès,Demande de service,Application métier,Ringover,Demande d'accès,250
+Demande de service/Matériel/Badge,Demande de service,Matériel,Badge,,251
+Demande de service/Matériel/Informatique/Connectique - réseau,Demande de service,Matériel,Informatique,Connectique - réseau,252
+Demande de service/Logiciel Bureautique/Office365/Outlook/Création d'un alias,Demande de service,Logiciel Bureautique,Office365,Outlook,253
+Demande de service/Application métier/ITEX PHONE/Demande de paramétrage,Demande de service,Application métier,ITEX PHONE,Demande de paramétrage,254
+Demande de service/Matériel/Téléphonie/Remplacement de mon téléphone mobile,Demande de service,Matériel,Téléphonie,Remplacement de mon téléphone mobile,255
+Demande de service/Application métier/Ringover,Demande de service,Application métier,Ringover,,256
+Demande de service/Matériel/Informatique/Adaptateur double écran,Demande de service,Matériel,Informatique,Adaptateur double écran,257
+Demande de service/Matériel/Informatique/Souris ergonomique,Demande de service,Matériel,Informatique,Souris ergonomique,258
+Demande de service/Application métier/Avensys,Demande de service,Application métier,Avensys,,259
+Demande de service/Matériel,Demande de service,Matériel,,,260
+Demande de service/Logiciel Bureautique,Demande de service,Logiciel Bureautique,,,261
+Demande de service/Application métier/INTRANET,Demande de service,Application métier,INTRANET,,262
+Demande de service/Matériel/Informatique/Ecran,Demande de service,Matériel,Informatique,Ecran,263
+Demande de service/Matériel/Informatique/Clavier,Demande de service,Matériel,Informatique,Clavier,264
+Demande de service/Matériel/Informatique/Casque,Demande de service,Matériel,Informatique,Casque,265
+Demande de service/Logiciel Bureautique/Office365/Outlook/Modification Liste de Diffusion,Demande de service,Logiciel Bureautique,Office365,Outlook,266
+Demande de service/06_Reporting/Reporting - Affectation modification d'un collaborateur,Demande de service,06_Reporting,Reporting - Affectation modification d'un collaborateur,,267
+Demande de service/Matériel/Equipements Expert/Amiante,Demande de service,Matériel,Equipements Expert,Amiante,268
+Demande de service/Matériel/Informatique/Webcam,Demande de service,Matériel,Informatique,Webcam,269
+Demande de service/Application métier/SALESFORCE/Demande de paramétrage,Demande de service,Application métier,SALESFORCE,Demande de paramétrage,270
+Demande de service/Application métier/SINERGIE/Demande de paramétrage,Demande de service,Application métier,SINERGIE,Demande de paramétrage,271
+Demande de service/Matériel/Informatique/Ordinateur portable,Demande de service,Matériel,Informatique,Ordinateur portable,272
+Demande de service/06_Reporting/Reporting - Rapport,Demande de service,06_Reporting,Reporting - Rapport,,273
+Demande de service/Application métier/Avensys/Demande d'accès,Demande de service,Application métier,Avensys,Demande d'accès,274
+Demande de service/Application métier/Soluce/Demande d'accès,Demande de service,Application métier,Soluce,Demande d'accès,275
+Demande de service/Matériel/Equipements Expert/Lampe frontale ATEX LED,Demande de service,Matériel,Equipements Expert,Lampe frontale ATEX LED,276
+Demande de service/Matériel/Equipements Expert/Gilet jaune,Demande de service,Matériel,Equipements Expert,Gilet jaune,277
+Demande de service/Logiciel Bureautique/Office365/Outlook/Création d'une boite mail partagée,Demande de service,Logiciel Bureautique,Office365,Outlook,278
+Demande de service/Logiciel Bureautique/Office365/Outlook/Création Liste de Diffusion,Demande de service,Logiciel Bureautique,Office365,Outlook,279
+Demande de service/Matériel/Téléphonie/Téléphone + Carte SIM,Demande de service,Matériel,Téléphonie,Téléphone + Carte SIM,280
+Demande de service/Application métier/ASANA,Demande de service,Application métier,ASANA,,281
+Demande de service/Application métier/ABRAXIO/Demande d'accès,Demande de service,Application métier,ABRAXIO,Demande d'accès,282
+Demande de service/Application métier/EXPENSYA/Demande d'accès,Demande de service,Application métier,EXPENSYA,Demande d'accès,283
+Demande de service/Matériel/Informatique/Cable réseau,Demande de service,Matériel,Informatique,Cable réseau,284
+Demande de service/Application métier/gREN,Demande de service,Application métier,gREN,,285
+Demande de service/Application métier/monVEOS,Demande de service,Application métier,monVEOS,,286
+Demande de service/Application métier/OPTIM/Demande d'accès,Demande de service,Application métier,OPTIM,Demande d'accès,287
+Demande de service/Matériel/Equipements Expert/Casque de chantier,Demande de service,Matériel,Equipements Expert,Casque de chantier,288
+Demande de service/Matériel/Equipements Expert/Chaussure de sécurité,Demande de service,Matériel,Equipements Expert,Chaussure de sécurité,289
+Demande de service/06_Reporting/Reporting - Ajout_Chgt d'un destinataire,Demande de service,06_Reporting,Reporting - Ajout_Chgt d'un destinataire,,290
+Demande de service/Matériel/Informatique/Retour UPS,Demande de service,Matériel,Informatique,Retour UPS,291
+Demande de service/Matériel/Equipements Expert/Masque de protection,Demande de service,Matériel,Equipements Expert,Masque de protection,292
+Demande de service/Application métier/Ringover/Demande de paramétrage,Demande de service,Application métier,Ringover,Demande de paramétrage,293
+Demande de service/Matériel/Equipements Expert/Télémètre,Demande de service,Matériel,Equipements Expert,Télémètre,294
+Demande de service/Logiciel Bureautique/Office365/Outlook/Délégation de messagerie,Demande de service,Logiciel Bureautique,Office365,Outlook,295
+Demande de service/Application métier/SALESFORCE,Demande de service,Application métier,SALESFORCE,,296
+Demande de service/Logiciel Bureautique/Office365/Demande d'accès,Demande de service,Logiciel Bureautique,Office365,Demande d'accès,297
+Demande de service/Logiciel Bureautique/Office365/Outlook,Demande de service,Logiciel Bureautique,Office365,Outlook,298
+Demande de service/Matériel/Equipements Expert/Perche télescopique pour caméra (6 mètres),Demande de service,Matériel,Equipements Expert,Perche télescopique pour caméra (6 mètres),299
+Demande de service/Matériel/Equipements Expert/Caméra thermique,Demande de service,Matériel,Equipements Expert,Caméra thermique,300
+Demande de service/Matériel/Informatique,Demande de service,Matériel,Informatique,,301
+Demande de service/Application métier/KYRIBA,Demande de service,Application métier,KYRIBA,,302
+Demande de service/Matériel/Téléphonie/Remplacement de ma carte SIM,Demande de service,Matériel,Téléphonie,Remplacement de ma carte SIM,303
+Demande de service/Application métier/SIMPLISSIMO,Demande de service,Application métier,SIMPLISSIMO,,304
+Demande de service/Matériel/Equipements Expert/Paire de bottes,Demande de service,Matériel,Equipements Expert,Paire de bottes,305
+Demande de service/Matériel/Equipements Expert/Nouveau télémètre,Demande de service,Matériel,Equipements Expert,Nouveau télémètre,306
+Demande de service/Application métier/SAGE X3/Demande d'accès,Demande de service,Application métier,SAGE X3,Demande d'accès,307
+Demande de service/Logiciel Bureautique/PDF-Exchange,Demande de service,Logiciel Bureautique,PDF-Exchange,,308
+"Demande de service/Logiciel Bureautique/Création, modification et suppression de compte",Demande de service,Logiciel Bureautique,"Création, modification et suppression de compte",,309
+Demande de service/Logiciel Bureautique/Office365/Demande de paramétrage,Demande de service,Logiciel Bureautique,Office365,Demande de paramétrage,310

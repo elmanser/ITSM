@@ -1,0 +1,300 @@
+# =============================================================================
+# ITSM Intelligent Platform — Docker Compose
+# Architecture: GLPI → Kafka → PostgreSQL DW → FastAPI → Streamlit
+# Monitoring:   Prometheus → Grafana
+# =============================================================================
+
+services:
+
+  # ======================== GLPI + MariaDB ========================
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: itsm-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - itsm-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  glpi:
+    image: diouxx/glpi:latest
+    container_name: itsm-glpi
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      TIMEZONE: Europe/Paris
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - glpi_data:/var/www/html/glpi
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - itsm-net
+
+  # ======================== Data Warehouse (PostgreSQL) ========================
+
+  postgres:
+    image: postgres:15
+    container_name: itsm-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./streaming/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./streaming/db/init-airflow-db.sh:/docker-entrypoint-initdb.d/02-init-airflow.sh
+    networks:
+      - itsm-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U itsm -d itsm_dw"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ======================== Kafka Streaming ========================
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: itsm-zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - itsm-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: itsm-kafka
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      - zookeeper
+    networks:
+      - itsm-net
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: itsm-kafka-ui
+    restart: unless-stopped
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: itsm-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
+    networks:
+      - itsm-net
+
+  # ======================== Pipeline (Producer + Consumer) ========================
+
+  producer:
+    build:
+      context: ./streaming/pipeline
+      dockerfile: Dockerfile
+    container_name: itsm-producer
+    restart: unless-stopped
+    command: python producer/glpi_producer.py
+    env_file: .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      glpi:
+        condition: service_started
+    networks:
+      - itsm-net
+
+  consumer:
+    build:
+      context: ./streaming/pipeline
+      dockerfile: Dockerfile
+    container_name: itsm-consumer
+    restart: unless-stopped
+    command: python consumer/kafka_consumer.py
+    env_file: .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - itsm-net
+
+  # ======================== Apache Airflow ========================
+
+  airflow:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    container_name: itsm-airflow
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/airflow_db
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+      API_URL: http://api:8000
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - itsm-net
+
+  # ======================== ML Training ========================
+
+  ml-trainer:
+    build:
+      context: ./streaming/ml
+      dockerfile: Dockerfile
+    container_name: itsm-ml-trainer
+    env_file: .env
+    volumes:
+      - ml_models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - itsm-net
+    profiles:
+      - training    # docker compose --profile training up ml-trainer
+
+  # ======================== FastAPI Prediction API ========================
+
+  api:
+    build:
+      context: ./streaming/api
+      dockerfile: Dockerfile
+    container_name: itsm-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      ML_MODEL_PATH: /app/models/model.joblib
+    volumes:
+      - ml_models:/app/models   # read-write so /retrain can save new model
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - itsm-net
+
+  # ======================== Streamlit Dashboard ========================
+
+  dashboard:
+    build:
+      context: ./streaming/dashboard
+      dockerfile: Dockerfile
+    container_name: itsm-dashboard
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    env_file: .env
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      - api
+      - postgres
+    networks:
+      - itsm-net
+
+  # ======================== Monitoring — Prometheus ========================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: itsm-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    depends_on:
+      - api
+    networks:
+      - itsm-net
+
+  # ======================== Monitoring — Grafana ========================
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: itsm-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: itsm_grafana_2026
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - itsm-net
+
+
+# ======================== Volumes ========================
+volumes:
+  mariadb_data:
+  glpi_data:
+  postgres_data:
+  airflow_logs:
+  ml_models:
+  prometheus_data:
+  grafana_data:
+
+# ======================== Network ========================
+networks:
+  itsm-net:
+    driver: bridge
