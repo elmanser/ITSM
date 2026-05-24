@@ -31,7 +31,7 @@ def _load_dataset():
     conn = psycopg2.connect(**PG_CONN)
     df = pd.read_sql("""
         SELECT dp.label AS priority_label, ft.urgency, ft.impact, ft.mttr_hours,
-               dc.itil_type AS category_type,
+               COALESCE(dc.name, 'unknown') AS category_type,
                EXTRACT(HOUR  FROM ft.date_creation) AS hour_of_day,
                EXTRACT(DOW   FROM ft.date_creation) AS day_of_week,
                EXTRACT(MONTH FROM ft.date_creation) AS month
@@ -45,9 +45,9 @@ def _load_dataset():
     return df
 
 
-def _generate_synthetic(n=6000):
+def _generate_synthetic(n=10000):
     np.random.seed(42)
-    categories = ["network", "hardware", "software", "security", "access"]
+    categories = ["network", "hardware", "software", "security", "access", "database", "email"]
     _dist = {
         "Very High": dict(u=[5,5,4,4,3], uw=[.40,.30,.20,.07,.03],
                           i=[5,5,4,4,3], iw=[.40,.30,.20,.07,.03], mu=3,  sd=1.5),
@@ -153,9 +153,14 @@ def run_retraining():
     logger.info("Retraining v2 started")
     try:
         try:
-            df = _load_dataset()
-            if len(df) < 100:
-                df = _generate_synthetic()
+            df_real = _load_dataset()
+            df_synth = _generate_synthetic()
+            if len(df_real) >= 100:
+                df = pd.concat([df_real, df_synth], ignore_index=True)
+                logger.info("Blended %d real + %d synthetic", len(df_real), len(df_synth))
+            else:
+                df = df_synth
+                logger.info("Using pure synthetic (%d real rows < 100)", len(df_real))
         except Exception as e:
             logger.warning("DW load failed (%s) — synthetic", e)
             df = _generate_synthetic()
@@ -207,5 +212,13 @@ def run_retraining():
 
         logger.info("Retraining done — %s  F1=%.4f  CV=%.4f  MAE=%.2fh",
                     best_name, best["f1"], best["cv_f1_mean"], mae)
+        return {
+            "algorithm": best_name,
+            "f1": round(best["f1"], 4),
+            "cv_f1_mean": round(best["cv_f1_mean"], 4),
+            "accuracy": round(best["accuracy"], 4),
+            "mae_mttr": round(mae, 2),
+        }
     except Exception as e:
         logger.error("Retraining failed: %s", e, exc_info=True)
+        raise

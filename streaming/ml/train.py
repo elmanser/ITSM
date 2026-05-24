@@ -37,15 +37,14 @@ REPORT_PATH = os.path.dirname(MODEL_PATH)
 def load_dataset():
     conn = psycopg2.connect(**PG_CONN)
     df = pd.read_sql("""
-        SELECT dp.label AS priority_label, ds.code AS status_code,
-               ft.urgency, ft.impact, ft.mttr_hours, ft.sla_respected,
-               dc.itil_type AS category_type,
+        SELECT dp.label AS priority_label,
+               ft.urgency, ft.impact, ft.mttr_hours,
+               COALESCE(dc.name, 'unknown') AS category_type,
                EXTRACT(HOUR  FROM ft.date_creation) AS hour_of_day,
                EXTRACT(DOW   FROM ft.date_creation) AS day_of_week,
                EXTRACT(MONTH FROM ft.date_creation) AS month
         FROM fact_tickets ft
         LEFT JOIN dim_priority dp ON ft.priority_id = dp.priority_id
-        LEFT JOIN dim_status   ds ON ft.status_id   = ds.status_id
         LEFT JOIN dim_category dc ON ft.category_id = dc.category_id
         WHERE ft.priority_id IS NOT NULL
         ORDER BY ft.date_creation;
@@ -60,7 +59,7 @@ def generate_synthetic_dataset(n=6000):
     """Synthetic dataset with urgency/impact strongly correlated to priority."""
     logger.info("Generating %d synthetic tickets with correlated features.", n)
     np.random.seed(42)
-    categories = ["network", "hardware", "software", "security", "access"]
+    categories = ["network", "hardware", "software", "security", "access", "database", "email"]
 
     # urgency/impact distributions per priority (realistic signal)
     _dist = {
@@ -265,7 +264,7 @@ def main():
 
     try:
         df_real = load_dataset()
-        df_synth = generate_synthetic_dataset(n=12000)
+        df_synth = generate_synthetic_dataset(n=15000)
         if len(df_real) >= 500:
             # Only blend real data once we have enough correlated data (post-producer-fix).
             df = pd.concat([df_real, df_synth], ignore_index=True)

@@ -4,6 +4,7 @@ Rate-limited (60 req/min per IP) · Prometheus metrics at /metrics
 """
 import logging
 import os
+import threading
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Any, Dict
@@ -11,7 +12,7 @@ from typing import Any, Dict
 import joblib
 import numpy as np
 import pandas as pd
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -21,16 +22,33 @@ from prometheus_fastapi_instrumentator import Instrumentator
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s — %(message)s")
 logger = logging.getLogger("itsm_api")
 
-# ── Model loading ─────────────────────────────────────────────────────────────
+# ── Model loading with auto-reload on mtime change ────────────────────────────
 MODEL_PATH = os.getenv("ML_MODEL_PATH", "/app/models/model.joblib")
 if not os.path.exists(MODEL_PATH):
     raise RuntimeError(f"Model not found at {MODEL_PATH}. Run the ML trainer first.")
 
-bundle = joblib.load(MODEL_PATH)
-model         = bundle["model"]
-label_encoder = bundle["label_encoder"]
-feature_cols  = bundle["feature_cols"]
-mttr_model    = bundle.get("mttr_model")  # optional — older bundles may lack it
+_bundle: Dict[str, Any] = {}
+_bundle_mtime: float = 0.0
+_bundle_lock = threading.Lock()
+
+
+def _get_bundle() -> Dict[str, Any]:
+    global _bundle, _bundle_mtime
+    try:
+        mtime = os.path.getmtime(MODEL_PATH)
+    except OSError:
+        return _bundle
+    with _bundle_lock:
+        if mtime > _bundle_mtime:
+            _bundle = joblib.load(MODEL_PATH)
+            _bundle_mtime = mtime
+            logger.info("Model bundle reloaded (algorithm=%s, F1=%.4f)",
+                        _bundle.get("metrics", {}).get("algorithm", "?"),
+                        _bundle.get("metrics", {}).get("f1", 0))
+    return _bundle
+
+
+_get_bundle()  # eager load at startup
 
 # ── App + rate limiter ────────────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
@@ -70,8 +88,10 @@ class TicketPayload(BaseModel):
 
 # ── Feature builder ───────────────────────────────────────────────────────────
 def build_feature_vector(payload: TicketPayload) -> pd.DataFrame:
+    b = _get_bundle()
+    cols = b["feature_cols"]
     u, i = payload.urgency, payload.impact
-    data = {col: 0 for col in feature_cols}
+    data = dict.fromkeys(cols, 0)
     data.update({
         "urgency":            u,
         "impact":             i,
@@ -95,34 +115,39 @@ def build_feature_vector(payload: TicketPayload) -> pd.DataFrame:
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 @app.get("/health", tags=["health"])
 def health_check():
+    b = _get_bundle()
     return {
         "status": "ok",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "model_version": bundle.get("trained_at", "unknown"),
+        "model_version": b.get("trained_at", "unknown"),
     }
 
 
-@app.post("/predict", tags=["prediction"])
+@app.post("/predict", tags=["prediction"],
+          responses={500: {"description": "Prediction error"}})
 @limiter.limit("60/minute")
 def predict(request: Request, payload: TicketPayload):
     """Predict priority label — max 60 requests/minute per IP."""
     try:
-        df    = build_feature_vector(payload)
-        probs = model.predict_proba(df)[0]
+        b    = _get_bundle()
+        clf  = b["model"]
+        le   = b["label_encoder"]
+        mreg = b.get("mttr_model")
+        df   = build_feature_vector(payload)
+        probs = clf.predict_proba(df)[0]
         idx   = int(np.argmax(probs))
-        label = str(label_encoder.inverse_transform([idx])[0])
+        label = str(le.inverse_transform([idx])[0])
         result: Dict[str, Any] = {
             "predicted_label": label,
             "predicted_index": idx,
             "confidence": round(float(probs[idx]), 4),
             "probabilities": {
-                str(label_encoder.inverse_transform([i])[0]): round(float(p), 4)
-                for i, p in enumerate(probs)
+                str(le.inverse_transform([j])[0]): round(float(p), 4)
+                for j, p in enumerate(probs)
             },
         }
-        if mttr_model is not None:
-            predicted_mttr = float(mttr_model.predict(df)[0])
-            result["predicted_mttr_hours"] = round(max(0.0, predicted_mttr), 2)
+        if mreg is not None:
+            result["predicted_mttr_hours"] = round(max(0.0, float(mreg.predict(df)[0])), 2)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -130,18 +155,24 @@ def predict(request: Request, payload: TicketPayload):
 
 @app.get("/metadata", tags=["debug"])
 def model_metadata():
+    b = _get_bundle()
     return {
-        "trained_at": bundle.get("trained_at"),
-        "algorithm":  bundle["metrics"]["algorithm"],
-        "features":   feature_cols,
-        "metrics":    bundle["metrics"],
+        "trained_at": b.get("trained_at"),
+        "algorithm":  b["metrics"]["algorithm"],
+        "features":   b["feature_cols"],
+        "metrics":    b["metrics"],
     }
 
 
 @app.post("/retrain", tags=["admin"])
-def trigger_retrain(background_tasks: BackgroundTasks):
-    """Trigger ML model retraining in background (non-blocking)."""
-    from retrain import run_retraining  # lazy import — avoids heavy deps at startup
-    background_tasks.add_task(run_retraining)
-    logger.info("Retraining triggered via API")
-    return {"status": "retraining_started", "timestamp": datetime.now(timezone.utc).isoformat()}
+def trigger_retrain():
+    """Run ML retraining synchronously and reload model. Returns new metrics."""
+    from retrain import run_retraining
+    logger.info("Retraining triggered via API — running synchronously")
+    metrics = run_retraining()
+    _get_bundle()  # force reload from updated model file
+    return {
+        "status": "completed",
+        "metrics": metrics,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }

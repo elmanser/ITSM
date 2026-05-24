@@ -1,8 +1,7 @@
 """
-DAG: dag_ml_retrain — Weekly ML model retraining
-Calls POST /retrain on the FastAPI service every Sunday at 02:00.
-The API runs the full training pipeline in a background thread and
-saves the new model.joblib to the shared Docker volume.
+DAG: dag_ml_retrain — Daily ML model retraining
+Calls POST /retrain (synchronous) then checks F1 >= threshold.
+Runs every day at 03:00.
 """
 from __future__ import annotations
 
@@ -16,45 +15,54 @@ from airflow.operators.python import PythonOperator
 
 logger = logging.getLogger(__name__)
 
-API_URL = os.getenv("API_URL", "http://api:8000")
+API_URL       = os.getenv("API_URL", "http://api:8000")
+F1_THRESHOLD  = float(os.getenv("ML_F1_THRESHOLD", "0.75"))
 
 DEFAULT_ARGS = {
     "owner": "itsm",
-    "retries": 2,
-    "retry_delay": timedelta(minutes=5),
+    "retries": 1,
+    "retry_delay": timedelta(minutes=10),
     "email_on_failure": False,
 }
 
 
-def trigger_retrain(**context):
-    """Call POST /retrain on the FastAPI service and confirm acknowledgment."""
-    url = f"{API_URL}/retrain"
-    logger.info("Triggering ML retraining at %s", url)
-    try:
-        resp = requests.post(url, timeout=15)
-        resp.raise_for_status()
-        data = resp.json()
-        logger.info("Retrain triggered: %s", data)
-        return data
-    except requests.RequestException as e:
-        raise RuntimeError(f"Failed to trigger retraining: {e}") from e
-
-
 def check_api_health(**context):
-    """Verify the API is reachable before attempting retrain."""
-    url = f"{API_URL}/health"
-    try:
-        resp = requests.get(url, timeout=10)
-        resp.raise_for_status()
-        logger.info("API healthy: %s", resp.json())
-    except requests.RequestException as e:
-        raise RuntimeError(f"API health check failed: {e}") from e
+    resp = requests.get(f"{API_URL}/health", timeout=10)
+    resp.raise_for_status()
+    logger.info("API healthy: %s", resp.json())
+
+
+def run_retrain(**context):
+    """POST /retrain — synchronous, returns metrics via XCom."""
+    resp = requests.post(f"{API_URL}/retrain", timeout=600)
+    resp.raise_for_status()
+    data = resp.json()
+    metrics = data.get("metrics", {})
+    logger.info("Retrain done: %s", metrics)
+    context["ti"].xcom_push(key="metrics", value=metrics)
+    return metrics
+
+
+def verify_f1(**context):
+    """Check new F1 score meets threshold; log warning if below."""
+    metrics = context["ti"].xcom_pull(task_ids="retrain_model", key="metrics") or {}
+    f1 = float(metrics.get("f1", 0))
+    algo = metrics.get("algorithm", "?")
+    mae  = metrics.get("mae_mttr", "?")
+    logger.info("New model — algorithm=%s  F1=%.4f  MAE=%s h", algo, f1, mae)
+    if f1 < F1_THRESHOLD:
+        logger.warning(
+            "F1=%.4f is below threshold %.2f — consider more data or hyperparameter tuning.",
+            f1, F1_THRESHOLD,
+        )
+    else:
+        logger.info("F1=%.4f >= threshold %.2f — model deployed.", f1, F1_THRESHOLD)
 
 
 with DAG(
     dag_id="dag_ml_retrain",
-    description="Weekly ML model retraining — every Sunday at 02:00",
-    schedule_interval="0 2 * * 0",   # Every Sunday at 02:00
+    description="Daily ML model retraining with F1 quality gate",
+    schedule_interval="0 3 * * *",   # Every day at 03:00
     start_date=datetime(2026, 1, 1),
     catchup=False,
     default_args=DEFAULT_ARGS,
@@ -67,8 +75,14 @@ with DAG(
     )
 
     retrain = PythonOperator(
-        task_id="trigger_model_retrain",
-        python_callable=trigger_retrain,
+        task_id="retrain_model",
+        python_callable=run_retrain,
+        execution_timeout=timedelta(minutes=20),
     )
 
-    health_check >> retrain
+    verify = PythonOperator(
+        task_id="verify_f1_threshold",
+        python_callable=verify_f1,
+    )
+
+    health_check >> retrain >> verify
