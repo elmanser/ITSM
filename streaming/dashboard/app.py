@@ -631,7 +631,9 @@ elif page == "🔴 Live Stream":
     live_df = query_live("""
         SELECT ft.glpi_ticket_id AS id, LEFT(ft.title,50) AS titre,
                COALESCE(dp.label,'—') AS priority, COALESCE(ds.label,'—') AS statut,
-               ROUND(ft.mttr_hours::numeric,1) AS mttr_h,
+               CASE WHEN ft.mttr_hours IS NULL THEN '—'
+                    ELSE ROUND(ft.mttr_hours::numeric,1)::text || 'h'
+               END AS mttr_h,
                CASE WHEN ft.sla_respected THEN 'OK' WHEN ft.sla_respected=false THEN 'KO' ELSE '—' END AS sla,
                TO_CHAR(ft.updated_at,'HH24:MI:SS') AS ingestion
         FROM fact_tickets ft
@@ -841,7 +843,9 @@ elif page == "🎯 Analyse SLA":
 
         late_df = query(f"""
             SELECT ft.glpi_ticket_id AS ID, dp.label AS Priorité,
-                   ROUND(fts.delay_hours::numeric,1) AS "Retard (h)",
+                   CASE WHEN fts.delay_hours IS NULL THEN '—'
+                        ELSE ROUND(fts.delay_hours::numeric,1)::text || 'h'
+                   END AS "Retard (h)",
                    LEFT(ft.title,42) AS Titre, ft.date_creation::date AS Date
             FROM fact_tickets ft
             JOIN fact_ticket_sla fts ON ft.ticket_id=fts.ticket_id
@@ -938,7 +942,7 @@ elif page == "🤖 Moteur Prédictif":
         sim_df = query(f"""
             SELECT ft.glpi_ticket_id AS ID, dp.label AS Priorité,
                    ft.urgency AS Urgence, ft.impact AS Impact,
-                   ROUND(ft.mttr_hours::numeric,1) AS "MTTR (h)",
+                   ROUND(ft.mttr_hours::numeric,1)::text || 'h' AS "MTTR (h)",
                    CASE WHEN ft.sla_respected THEN '✅' ELSE '❌' END AS SLA
             FROM fact_tickets ft JOIN dim_priority dp ON ft.priority_id=dp.priority_id
             {where(f'ft.urgency BETWEEN {urgency-1} AND {urgency+1} AND ft.impact BETWEEN {impact-1} AND {impact+1} AND ft.mttr_hours IS NOT NULL')}
