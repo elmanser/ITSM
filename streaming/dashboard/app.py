@@ -371,7 +371,7 @@ with st.sidebar:
                  if date_from else "1=1")
 
     st.divider()
-    last_df = query_live("SELECT MAX(ingested_at) AS t, COUNT(*) AS total FROM fact_tickets WHERE source='glpi_api'")
+    last_df = query_live("SELECT MAX(updated_at) AS t, COUNT(*) AS total FROM fact_tickets WHERE source='glpi_api'")
     if not last_df.empty and last_df["t"].iloc[0] is not None:
         n  = int(last_df["total"].iloc[0])
         lt = pd.to_datetime(last_df["t"].iloc[0]).strftime("%H:%M:%S")
@@ -564,8 +564,8 @@ elif page == "🔴 Live Stream":
             <div class="live-ring"><div class="live-ring-dot"></div><div class="live-ring-pulse"></div></div>
             LIVE</div>""", unsafe_allow_html=True)
 
-    tp1h      = query_live("SELECT COUNT(*) AS n FROM fact_tickets WHERE ingested_at > NOW()-INTERVAL '1 hour' AND source='glpi_api'")
-    tp5m      = query_live("SELECT COUNT(*) AS n FROM fact_tickets WHERE ingested_at > NOW()-INTERVAL '5 minutes' AND source='glpi_api'")
+    tp1h      = query_live("SELECT COUNT(*) AS n FROM fact_tickets WHERE updated_at > NOW()-INTERVAL '1 hour' AND source='glpi_api'")
+    tp5m      = query_live("SELECT COUNT(*) AS n FROM fact_tickets WHERE updated_at > NOW()-INTERVAL '5 minutes' AND source='glpi_api'")
     tp_total  = query_live("SELECT COUNT(*) AS n FROM fact_tickets WHERE source='glpi_api'")
     crit_open = query_live("""SELECT COUNT(*) AS n FROM fact_tickets ft
         JOIN dim_priority dp ON ft.priority_id=dp.priority_id
@@ -598,8 +598,8 @@ elif page == "🔴 Live Stream":
     col_roll, col_prio = st.columns(2)
 
     roll_df = query_live("""
-        SELECT DATE_TRUNC('minute', ingested_at) AS minute, COUNT(*) AS tickets
-        FROM fact_tickets WHERE ingested_at > NOW()-INTERVAL '30 minutes' AND source='glpi_api'
+        SELECT DATE_TRUNC('minute', updated_at) AS minute, COUNT(*) AS tickets
+        FROM fact_tickets WHERE updated_at > NOW()-INTERVAL '30 minutes' AND source='glpi_api'
         GROUP BY 1 ORDER BY 1
     """)
     with col_roll:
@@ -615,7 +615,7 @@ elif page == "🔴 Live Stream":
     live_prio = query_live("""
         SELECT dp.label AS priority, COUNT(*) AS count
         FROM fact_tickets ft JOIN dim_priority dp ON ft.priority_id=dp.priority_id
-        WHERE ft.ingested_at > NOW()-INTERVAL '1 hour' AND ft.source='glpi_api'
+        WHERE ft.updated_at > NOW()-INTERVAL '1 hour' AND ft.source='glpi_api'
         GROUP BY dp.label, dp.code ORDER BY dp.code
     """)
     with col_prio:
@@ -633,11 +633,11 @@ elif page == "🔴 Live Stream":
                COALESCE(dp.label,'—') AS priority, COALESCE(ds.label,'—') AS statut,
                ROUND(ft.mttr_hours::numeric,1) AS mttr_h,
                CASE WHEN ft.sla_respected THEN 'OK' WHEN ft.sla_respected=false THEN 'KO' ELSE '—' END AS sla,
-               TO_CHAR(ft.ingested_at,'HH24:MI:SS') AS ingestion
+               TO_CHAR(ft.updated_at,'HH24:MI:SS') AS ingestion
         FROM fact_tickets ft
         LEFT JOIN dim_priority dp ON ft.priority_id=dp.priority_id
         LEFT JOIN dim_status   ds ON ft.status_id=ds.status_id
-        WHERE ft.source='glpi_api' ORDER BY ft.ingested_at DESC LIMIT 30
+        WHERE ft.source='glpi_api' ORDER BY ft.updated_at DESC LIMIT 30
     """)
     if live_df.empty:
         st.warning("Aucun ticket streaming. Le producer Kafka alimente la table toutes les 30 s.")
