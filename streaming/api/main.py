@@ -7,11 +7,13 @@ import os
 import threading
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Dict
+from functools import lru_cache
+from typing import Any, Dict, Optional
 
 import joblib
 import numpy as np
 import pandas as pd
+import psycopg2
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -49,6 +51,15 @@ def _get_bundle() -> Dict[str, Any]:
 
 
 _get_bundle()  # eager load at startup
+
+# ── PostgreSQL connection ─────────────────────────────────────────────────────
+PG_CONN = {
+    "host":     os.getenv("POSTGRES_HOST", "postgres"),
+    "port":     int(os.getenv("POSTGRES_PORT", "5432")),
+    "dbname":   os.getenv("POSTGRES_DB", "itsm_dw"),
+    "user":     os.getenv("POSTGRES_USER", "itsm"),
+    "password": os.getenv("POSTGRES_PASSWORD", "itsm_dw_secret_2026"),
+}
 
 # ── App + rate limiter ────────────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
@@ -148,6 +159,10 @@ def predict(request: Request, payload: TicketPayload):
         }
         if mreg is not None:
             result["predicted_mttr_hours"] = round(max(0.0, float(mreg.predict(df)[0])), 2)
+        # Best group recommendation based on predicted priority + category
+        group_rec = _best_group(label, payload.category_type)
+        if group_rec:
+            result["recommended_group"] = group_rec
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -175,4 +190,61 @@ def trigger_retrain():
         "status": "completed",
         "metrics": metrics,
         "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# ── Team recommendation ───────────────────────────────────────────────────────
+def _best_group(priority_label: str, category: str) -> Optional[Dict[str, Any]]:
+    """Return the group with lowest avg MTTR for a given priority + category."""
+    try:
+        with psycopg2.connect(**PG_CONN) as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT dg.name,
+                           ROUND(AVG(ft.mttr_hours)::numeric, 1) AS avg_mttr,
+                           COUNT(*)                              AS ticket_count,
+                           ROUND(100.0 * SUM(CASE WHEN ft.sla_respected THEN 1 ELSE 0 END)
+                                 / NULLIF(COUNT(*), 0), 1)      AS sla_pct
+                    FROM fact_tickets ft
+                    JOIN dim_priority dp ON ft.priority_id = dp.priority_id
+                    JOIN dim_category dc ON ft.category_id = dc.category_id
+                    JOIN dim_group    dg ON ft.group_id    = dg.group_id
+                    WHERE dp.label = %s
+                      AND dc.name  = %s
+                      AND ft.mttr_hours IS NOT NULL
+                    GROUP BY dg.name
+                    HAVING COUNT(*) >= 5
+                    ORDER BY avg_mttr ASC
+                    LIMIT 1;
+                """, (priority_label, category.lower()))
+                row = cur.fetchone()
+                if row:
+                    return {
+                        "group": row[0],
+                        "avg_mttr_hours": float(row[1]),
+                        "historical_tickets": int(row[2]),
+                        "sla_rate_pct": float(row[3]) if row[3] else None,
+                    }
+    except Exception as e:
+        logger.warning("Group recommendation query failed: %s", e)
+    return None
+
+
+@app.get("/recommend_group", tags=["recommendation"],
+         responses={404: {"description": "No historical data for given priority/category"}})
+@limiter.limit("60/minute")
+def recommend_group(request: Request, priority: str, category: str):
+    """Return the best support group for a given priority and category based on historical MTTR."""
+    result = _best_group(priority, category)
+    if not result:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No historical data for priority='{priority}' category='{category}'",
+        )
+    return {
+        "recommended_group": result["group"],
+        "avg_mttr_hours":    result["avg_mttr_hours"],
+        "sla_rate_pct":      result["sla_rate_pct"],
+        "historical_tickets": result["historical_tickets"],
+        "basis": f"Lowest avg MTTR among groups with ≥5 tickets for {priority}/{category}",
     }
