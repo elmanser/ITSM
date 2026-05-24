@@ -76,7 +76,7 @@ GLPI REST API (ou Mock Producer)
 | **Stockage** | PostgreSQL Data Warehouse | Schéma étoile (dimensions + faits) |
 | **ML** | Scikit-learn / XGBoost | Classification priorité + régression MTTR |
 | **Serving** | FastAPI | API REST prédiction, rate-limited, Prometheus |
-| **Visualisation** | Streamlit | Dashboard 6 pages, glassmorphisme |
+| **Visualisation** | Streamlit | Dashboard 9 pages, glassmorphisme |
 | **Monitoring** | Prometheus + Grafana | Métriques API, latence, usage mémoire/CPU |
 | **Orchestration** | Apache Airflow | DAGs ETL quotidien + retraining ML hebdomadaire |
 
@@ -206,7 +206,7 @@ ITSM PROJECT/
 
 ```bash
 # 1. Cloner / accéder au répertoire
-cd "ITSM PROJECT"
+c
 
 # 2. Démarrer tous les services
 docker compose up -d
@@ -233,6 +233,7 @@ ZooKeeper → Kafka → MariaDB → PostgreSQL (healthy)
 ```bash
 # Arrêter sans supprimer les volumes
 docker compose stop
+
 
 # Arrêter et supprimer tout (y compris données)
 docker compose down -v
@@ -397,13 +398,13 @@ Traitement par message :
 
 | Métrique | Valeur |
 |----------|--------|
-| Algorithme | RandomForest |
-| F1-Score pondéré | **69.8%** |
-| Accuracy | **69.7%** |
-| Balanced Accuracy | **72.5%** |
-| CV-F1 (5-fold) | **69.5% ± 0.86%** |
-| MAE MTTR | **15.4h** |
-| Features | **17** |
+| Algorithme | **XGBoost** |
+| F1-Score pondéré | **73.5%** |
+| Accuracy | **73.7%** |
+| Balanced Accuracy | **68.4%** |
+| CV-F1 (5-fold) | **72.9% ± 0.33%** |
+| MAE MTTR | **21.3h** |
+| Features | **19** |
 
 #### Régresseur MTTR
 
@@ -485,11 +486,24 @@ Prédiction de la priorité d'un ticket ITSM.
 Informations sur le modèle chargé (algorithme, features, métriques).
 
 #### `POST /retrain`
-Déclenche un retraining asynchrone en arrière-plan.
+Déclenche un retraining **synchrone** et retourne les nouvelles métriques.
 ```json
 {
-  "status": "retraining_started",
-  "timestamp": "2026-05-17T18:31:00Z"
+  "status": "completed",
+  "metrics": { "algorithm": "XGBoost", "f1": 0.7351, "mae_mttr": 21.28 },
+  "timestamp": "2026-05-24T18:19:33Z"
+}
+```
+
+#### `GET /recommend_group?priority=Very High&category=network`
+Recommande le meilleur groupe de support basé sur l'historique MTTR.
+```json
+{
+  "recommended_group": "Group_10",
+  "avg_mttr_hours": 24.8,
+  "sla_rate_pct": 20.0,
+  "historical_tickets": 5,
+  "basis": "Lowest avg MTTR among groups with ≥5 tickets for Very High/network"
 }
 ```
 
@@ -510,7 +524,7 @@ Métriques Prometheus (format text/plain) :
 
 ## 11. Dashboard Streamlit
 
-6 pages accessibles via la barre latérale :
+9 pages accessibles via la barre latérale :
 
 ### Page 1 — KPIs Stratégiques
 - 6 cartes KPI animées (total tickets, ouverts, résolus, MTTR moyen, taux SLA, critiques)
@@ -555,6 +569,19 @@ Métriques Prometheus (format text/plain) :
 - Pie chart répartition des types de features
 - Tableau historique des modèles entraînés (depuis DW)
 - Bouton de retraining manuel
+
+### Page 7 — Prévisions (Forecasting)
+- Prévision du volume de tickets sur 7 jours (Prophet / interpolation)
+- Distribution prévisionnelle par priorité
+
+### Page 8 — Performance Équipes
+- MTTR moyen et SLA% par groupe de support
+- Scatter plot MTTR vs SLA% vs volume (bubble chart)
+- Classement des équipes
+
+### Page 9 — Executive Summary
+- Vue consolidée pour management : KPIs clés, tendances, alertes critiques
+- Export CSV des métriques
 
 ---
 
@@ -614,12 +641,17 @@ extract_data → clean_data → transform_data → load_to_dw → compute_kpis
 ingest_from_api
 ```
 
-#### `dag_ml_retrain` — Dimanche 02h00
+#### `dag_ml_retrain` — Quotidien 03h00
 ```
-check_api_health → trigger_model_retrain
+check_api_health → retrain_model → verify_f1_threshold
 ```
+Appelle `POST http://api:8000/retrain` (synchrone). Retourne les métriques via XCom. Vérifie que F1 ≥ 0.75. Le nouveau modèle est auto-rechargé sans redémarrage.
 
-Le retraining appelle `POST http://api:8000/retrain` qui lance `retrain.py` en tâche de fond FastAPI. Le nouveau modèle est sauvegardé et l'API redémarre automatiquement.
+#### `dag_sla_alerts` — Toutes les 30 minutes
+```
+check_sla_breaches → check_approaching_sla
+```
+Détecte les tickets ouverts qui ont dépassé leur deadline SLA. Alerte préventive sur les tickets qui brécheront dans les 2h suivantes.
 
 #### `batch_itsm_pipeline_dag` — Manuel / planifiable
 ```
@@ -776,10 +808,9 @@ Le producteur basculera automatiquement du mode mock vers GLPI réel.
 | Élément | Priorité | Description |
 |---------|----------|-------------|
 | **Tokens GLPI** | Haute | `GLPI_APP_TOKEN` et `GLPI_USER_TOKEN` dans `.env` vides → mode mock uniquement |
-| **Retraining automatique actif** | Moyenne | Le DAG `dag_ml_retrain` existe mais Airflow doit être activé manuellement |
 | **Authentification dashboard** | Basse | Streamlit sans login — à sécuriser en prod |
 | **HTTPS / TLS** | Basse | Tout en HTTP — à ajouter avec un reverse proxy (Nginx/Traefik) |
-| **Alerting Grafana** | Basse | Dashboard sans alertes email/Slack configurées |
+| **Alerting email/Slack** | Basse | DAG SLA alerts log dans Airflow mais pas d'envoi email/Slack |
 
 ### Améliorations possibles
 
@@ -880,5 +911,5 @@ curl -s http://localhost:9090/api/v1/targets | \
 
 ---
 
-*Documentation générée le 17 Mai 2026 — ITSM Intelligence Platform v3*
+*Documentation mise à jour le 24 Mai 2026 — ITSM Intelligence Platform v4*
 *ENSA Fès · Département Génie des Télécommunications et Réseaux*
