@@ -6,3 +6,4 @@ psycopg2-binary==2.9.9
 requests==2.31.0
 plotly==5.19.0
 python-dotenv==1.0.0
+minio==7.2.7
