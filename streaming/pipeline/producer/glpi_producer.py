@@ -202,7 +202,8 @@ def main():
         return
 
     producer     = create_kafka_producer(KAFKA_BROKER)
-    last_seen_id = 2000 if use_mock else 0
+    # Use epoch-based start ID in mock mode to ensure unique IDs across restarts
+    last_seen_id = (int(time.time()) // 10) * 10 if use_mock else 0
     total        = 0
 
     try:
