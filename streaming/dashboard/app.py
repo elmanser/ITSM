@@ -338,8 +338,7 @@ with st.sidebar:
         "nav",
         ["📊 KPIs Stratégiques", "🔴 Live Stream", "📈 Tendances",
          "🎯 Analyse SLA", "🤖 Moteur Prédictif", "🧠 Performance ML",
-         "🔮 Prévisions IA", "👥 Équipes & Catégories", "📋 Vue Exécutive",
-         "🗄️ Data Lake"],
+         "🔮 Prévisions IA", "👥 Équipes & Catégories", "📋 Vue Exécutive"],
         label_visibility="collapsed",
     )
 
@@ -1385,103 +1384,3 @@ elif page == "📋 Vue Exécutive":
         mime="text/csv",
     )
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# PAGE 10 — DATA LAKE
-# ══════════════════════════════════════════════════════════════════════════════
-elif page == "🗄️ Data Lake":
-    hero("Data Lake — Architecture Lambda", "Couche Bronze MinIO · Pipeline batch vers le Data Warehouse", "🗄️")
-
-    MINIO_ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "minio:9000")
-    MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY",  "itsm_minio")
-    MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY",  "itsm_minio_secret_2026")
-    MINIO_BUCKET     = os.getenv("MINIO_BUCKET",      "itsm-data-lake")
-
-    # ── Architecture diagram ──
-    st.markdown("""
-    <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);
-    border-radius:16px;padding:20px 24px;margin-bottom:20px;font-family:monospace;
-    font-size:.85rem;color:#94a3b8;line-height:2;">
-    <span style="color:#a5b4fc;font-weight:700;">Architecture Lambda — Chemin Batch</span><br>
-    GLPI Mock Producer<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;│<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;▼<br>
-    <span style="color:#34d399;">Kafka [itsm.tickets.raw]</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;│<br>
-    &nbsp;&nbsp;┌──┴────────────────────────┐<br>
-    &nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
-    <span style="color:#f472b6;">Consumer (Speed)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fb923c;">Lake Writer (Batch)</span><br>
-    &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-    &nbsp;&nbsp;▼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
-    <span style="color:#38bdf8;">PostgreSQL DW</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fb923c;">MinIO Data Lake</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a3e635;">Airflow DAG dag_lake_to_dw</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#38bdf8;">PostgreSQL DW</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── MinIO stats ──
-    try:
-        from minio import Minio
-        mc = Minio(MINIO_ENDPOINT, access_key=MINIO_ACCESS_KEY,
-                   secret_key=MINIO_SECRET_KEY, secure=False)
-
-        bronze_objects  = list(mc.list_objects(MINIO_BUCKET, prefix="bronze/tickets/",   recursive=True))
-        processed_objs  = list(mc.list_objects(MINIO_BUCKET, prefix="processed/",        recursive=True))
-
-        bronze_count    = len(bronze_objects)
-        bronze_size_kb  = sum((o.size or 0) for o in bronze_objects) / 1024
-        proc_count      = len(processed_objs)
-        proc_size_kb    = sum((o.size or 0) for o in processed_objs) / 1024
-        total_files     = bronze_count + proc_count
-        total_size_kb   = bronze_size_kb + proc_size_kb
-
-        c1, c2, c3, c4 = st.columns(4)
-        kpi_css = "background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15);border-radius:14px;padding:16px;text-align:center;"
-        c1.markdown(f'<div style="{kpi_css}"><div style="font-size:.7rem;color:#64748b;text-transform:uppercase;">Fichiers Bronze</div><div style="font-size:1.8rem;font-weight:700;color:#a5b4fc;">{bronze_count}</div><div style="font-size:.72rem;color:#64748b;">En attente de traitement</div></div>', unsafe_allow_html=True)
-        c2.markdown(f'<div style="{kpi_css}"><div style="font-size:.7rem;color:#64748b;text-transform:uppercase;">Fichiers Traités</div><div style="font-size:1.8rem;font-weight:700;color:#34d399;">{proc_count}</div><div style="font-size:.72rem;color:#64748b;">Archivés après ingestion</div></div>', unsafe_allow_html=True)
-        c3.markdown(f'<div style="{kpi_css}"><div style="font-size:.7rem;color:#64748b;text-transform:uppercase;">Taille Totale</div><div style="font-size:1.8rem;font-weight:700;color:#fb923c;">{total_size_kb:.1f} KB</div><div style="font-size:.72rem;color:#64748b;">bronze + processed</div></div>', unsafe_allow_html=True)
-        c4.markdown(f'<div style="{kpi_css}"><div style="font-size:.7rem;color:#64748b;text-transform:uppercase;">Total Fichiers</div><div style="font-size:1.8rem;font-weight:700;color:#38bdf8;">{total_files}</div><div style="font-size:.72rem;color:#64748b;">Tous layers confondus</div></div>', unsafe_allow_html=True)
-
-        st.divider()
-
-        # ── Bronze files table ──
-        if bronze_objects:
-            st.markdown('<div class="sec-label">Fichiers en attente — Bronze Layer</div>', unsafe_allow_html=True)
-            rows = []
-            for o in sorted(bronze_objects, key=lambda x: x.last_modified or datetime.min, reverse=True)[:20]:
-                parts = o.object_name.split("/")
-                rows.append({
-                    "Chemin":      o.object_name,
-                    "Taille (KB)": round((o.size or 0) / 1024, 2),
-                    "Modifié":     str(o.last_modified)[:19] if o.last_modified else "—",
-                })
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, height=300)
-        else:
-            st.info("Aucun fichier en attente dans la couche bronze. Le lake-writer envoie des batches toutes les 60s.")
-
-        # ── Processed files ──
-        if processed_objs:
-            st.divider()
-            st.markdown('<div class="sec-label">Fichiers archivés — Processed Layer</div>', unsafe_allow_html=True)
-            rows_p = [{"Chemin": o.object_name, "Taille (KB)": round((o.size or 0)/1024, 2),
-                       "Archivé": str(o.last_modified)[:19] if o.last_modified else "—"}
-                      for o in sorted(processed_objs, key=lambda x: x.last_modified or datetime.min, reverse=True)[:20]]
-            st.dataframe(pd.DataFrame(rows_p), use_container_width=True, height=240)
-
-        # ── Ingestion source comparison ──
-        st.divider()
-        st.markdown('<div class="sec-label">Tickets par source d\'ingestion</div>', unsafe_allow_html=True)
-        src_df = query("SELECT source, COUNT(*) AS tickets FROM fact_tickets GROUP BY source ORDER BY tickets DESC")
-        if not src_df.empty:
-            fig_src = px.pie(src_df, values="tickets", names="source",
-                             color_discrete_sequence=["#6366f1","#34d399","#fb923c"],
-                             title="Répartition par source (Speed vs Batch)")
-            st.plotly_chart(dark_fig(fig_src, height=320), use_container_width=True)
-
-    except Exception as e:
-        st.warning(f"MinIO non disponible : {e}")
-        st.info("Démarrez les services MinIO avec `docker compose up -d minio lake-writer`")

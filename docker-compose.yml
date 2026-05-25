@@ -247,66 +247,6 @@ services:
       retries: 3
       start_period: 20s
 
-  # ======================== Data Lake — MinIO ========================
-
-  minio:
-    image: minio/minio:latest
-    container_name: itsm-minio
-    restart: unless-stopped
-    ports:
-      - "9000:9000"    # S3 API
-      - "9001:9001"    # Web Console
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-itsm_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-itsm_minio_secret_2026}
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    networks:
-      - itsm-net
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-
-  minio-init:
-    image: minio/mc:latest
-    container_name: itsm-minio-init
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-        mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-itsm_minio} $${MINIO_ROOT_PASSWORD:-itsm_minio_secret_2026};
-        mc mb --ignore-existing local/itsm-data-lake;
-        mc mb --ignore-existing local/itsm-data-lake/bronze/tickets;
-        mc mb --ignore-existing local/itsm-data-lake/processed;
-        echo 'MinIO buckets ready';
-      "
-    networks:
-      - itsm-net
-
-  lake-writer:
-    build:
-      context: ./streaming/lake
-      dockerfile: Dockerfile
-    container_name: itsm-lake-writer
-    restart: unless-stopped
-    env_file: .env
-    environment:
-      MINIO_ENDPOINT: minio:9000
-      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-itsm_minio}
-      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-itsm_minio_secret_2026}
-      MINIO_BUCKET: itsm-data-lake
-    depends_on:
-      kafka:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-    networks:
-      - itsm-net
-
   # ======================== Monitoring — Prometheus ========================
 
   prometheus:
@@ -359,7 +299,6 @@ volumes:
   ml_models:
   prometheus_data:
   grafana_data:
-  minio_data:
 
 # ======================== Network ========================
 networks:
