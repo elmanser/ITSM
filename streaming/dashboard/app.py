@@ -1391,7 +1391,7 @@ elif page == "📋 Vue Exécutive":
 # PAGE 10 — DATA LAKE (Lambda Architecture)
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "🗄️ Data Lake":
-    _hero("Data Lake — Architecture Lambda", "bronze → silver → Data Warehouse · Batch & Streaming", "exec")
+    hero("Data Lake — Architecture Lambda", "bronze → silver → Data Warehouse · Batch & Streaming", "exec")
 
     MINIO_ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "minio:9000")
     MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY",  "itsm_minio")
