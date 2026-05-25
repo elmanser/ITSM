@@ -338,7 +338,8 @@ with st.sidebar:
         "nav",
         ["📊 KPIs Stratégiques", "🔴 Live Stream", "📈 Tendances",
          "🎯 Analyse SLA", "🤖 Moteur Prédictif", "🧠 Performance ML",
-         "🔮 Prévisions IA", "👥 Équipes & Catégories", "📋 Vue Exécutive"],
+         "🔮 Prévisions IA", "👥 Équipes & Catégories", "📋 Vue Exécutive",
+         "🗄️ Data Lake"],
         label_visibility="collapsed",
     )
 
@@ -1384,3 +1385,138 @@ elif page == "📋 Vue Exécutive":
         mime="text/csv",
     )
 
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 10 — DATA LAKE (Lambda Architecture)
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🗄️ Data Lake":
+    _hero("Data Lake — Architecture Lambda", "bronze → silver → Data Warehouse · Batch & Streaming", "exec")
+
+    MINIO_ENDPOINT   = os.getenv("MINIO_ENDPOINT",   "minio:9000")
+    MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY",  "itsm_minio")
+    MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY",  "itsm_minio_secret_2026")
+    BUCKET           = os.getenv("MINIO_BUCKET",      "itsm-datalake")
+
+    st.markdown("""
+    <div style="background:rgba(15,23,42,.7);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 28px;margin-bottom:24px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;color:#a78bfa;margin-bottom:18px;">
+        Architecture Lambda — Double chemin vers le Data Warehouse
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:16px 18px;">
+          <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;color:#818cf8;margin-bottom:12px;">🔁 Streaming Path (Speed Layer)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#94a3b8;line-height:2.2;">
+            <span style="color:#34d399;">Producer (GLPI / Mock)</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#fbbf24;">Kafka [itsm.tickets.raw]</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#f97316;">lake-writer</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#fb923c;font-weight:700;">MinIO bronze/streaming/</span><br>
+            &nbsp;&nbsp;↓ dag_lake_streaming_etl (15 min)<br>
+            <span style="color:#a3e635;font-weight:700;">MinIO silver/streaming/</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#38bdf8;font-weight:700;">PostgreSQL Data Warehouse</span>
+          </div>
+        </div>
+        <div style="background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.22);border-radius:12px;padding:16px 18px;">
+          <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;color:#34d399;margin-bottom:12px;">📦 Batch Path (Batch Layer)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#94a3b8;line-height:2.2;">
+            <span style="color:#34d399;">Source Data (CSV / GLPI)</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#f97316;">Airflow — ingest_to_bronze</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#fb923c;font-weight:700;">MinIO bronze/batch/</span><br>
+            &nbsp;&nbsp;↓ dag_lake_batch_etl (daily 03:00)<br>
+            <span style="color:#a3e635;font-weight:700;">MinIO silver/batch/</span><br>
+            &nbsp;&nbsp;↓<br>
+            <span style="color:#38bdf8;font-weight:700;">PostgreSQL Data Warehouse</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    try:
+        from minio import Minio
+        mc = Minio(MINIO_ENDPOINT, access_key=MINIO_ACCESS_KEY,
+                   secret_key=MINIO_SECRET_KEY, secure=False)
+
+        def _zone_stats(prefix):
+            objs = list(mc.list_objects(BUCKET, prefix=prefix + "/", recursive=True))
+            return len(objs), sum((o.size or 0) for o in objs) / 1024, objs
+
+        nb_s, kb_s, objs_s = _zone_stats("bronze/streaming")
+        nb_b, kb_b, objs_b = _zone_stats("bronze/batch")
+        ns_s, ks_s, _      = _zone_stats("silver/streaming")
+        ns_b, ks_b, _      = _zone_stats("silver/batch")
+
+        c1, c2, c3, c4 = st.columns(4)
+        def _lkpi(col, label, val, sub, color):
+            col.markdown(f'''<div style="background:rgba(15,23,42,.7);border:1px solid {color}33;
+                border-top:2px solid {color};border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:.68rem;color:#475569;text-transform:uppercase;margin-bottom:6px;">{label}</div>
+                <div style="font-size:1.9rem;font-weight:800;color:{color};font-family:Space Grotesk,sans-serif;">{val}</div>
+                <div style="font-size:.68rem;color:#334155;margin-top:4px;">{sub}</div>
+            </div>''', unsafe_allow_html=True)
+
+        _lkpi(c1, "Bronze / Streaming", f"{nb_s} fichiers", f"{kb_s:.1f} KB", "#fb923c")
+        _lkpi(c2, "Bronze / Batch",     f"{nb_b} fichiers", f"{kb_b:.1f} KB", "#f97316")
+        _lkpi(c3, "Silver / Streaming", f"{ns_s} fichiers", f"{ks_s:.1f} KB", "#a3e635")
+        _lkpi(c4, "Silver / Batch",     f"{ns_b} fichiers", f"{ks_b:.1f} KB", "#34d399")
+
+        st.divider()
+        tab1, tab2, tab3 = st.tabs(["🟠 Bronze / Streaming", "📦 Bronze / Batch", "🟢 Silver — Processed"])
+
+        with tab1:
+            st.markdown('<div class="sec-label">Fichiers bruts — Kafka → MinIO bronze/streaming/</div>', unsafe_allow_html=True)
+            if objs_s:
+                rows = [{"Chemin": o.object_name,
+                         "Taille (KB)": round((o.size or 0)/1024, 2),
+                         "Ecrit le": str(o.last_modified)[:19] if o.last_modified else "—"}
+                        for o in sorted(objs_s, key=lambda x: x.last_modified or datetime.min, reverse=True)[:25]]
+                st.dataframe(pd.DataFrame(rows), use_container_width=True, height=300)
+                st.caption("Traites par dag_lake_streaming_etl toutes les 15 min.")
+            else:
+                st.info("Aucun fichier. Le lake-writer ecrit depuis Kafka toutes les 60 secondes.")
+
+        with tab2:
+            st.markdown('<div class="sec-label">Fichiers bruts — Source → MinIO bronze/batch/</div>', unsafe_allow_html=True)
+            if objs_b:
+                rows = [{"Chemin": o.object_name,
+                         "Taille (KB)": round((o.size or 0)/1024, 2),
+                         "Ecrit le": str(o.last_modified)[:19] if o.last_modified else "—"}
+                        for o in sorted(objs_b, key=lambda x: x.last_modified or datetime.min, reverse=True)[:25]]
+                st.dataframe(pd.DataFrame(rows), use_container_width=True, height=300)
+                st.caption("Traites par dag_lake_batch_etl chaque nuit a 03:00.")
+            else:
+                st.info("Aucun fichier batch. DAG s'execute a 03:00 chaque nuit.")
+
+        with tab3:
+            sv_s_objs = list(mc.list_objects(BUCKET, prefix="silver/streaming/", recursive=True))
+            sv_b_objs = list(mc.list_objects(BUCKET, prefix="silver/batch/",     recursive=True))
+            all_silver = sv_s_objs + sv_b_objs
+            if all_silver:
+                rows = [{"Zone": "streaming" if "silver/streaming" in o.object_name else "batch",
+                         "Chemin": o.object_name,
+                         "Taille (KB)": round((o.size or 0)/1024, 2),
+                         "Traite le": str(o.last_modified)[:19] if o.last_modified else "—"}
+                        for o in sorted(all_silver, key=lambda x: x.last_modified or datetime.min, reverse=True)[:30]]
+                st.dataframe(pd.DataFrame(rows), use_container_width=True, height=360)
+            else:
+                st.info("Aucun fichier silver. Les DAGs ETL les creent apres chaque traitement.")
+
+        st.divider()
+        st.markdown('<div class="sec-label">Tickets dans le DW par chemin d'ingestion</div>', unsafe_allow_html=True)
+        src_df = query("SELECT source, COUNT(*) AS tickets FROM fact_tickets GROUP BY source ORDER BY tickets DESC")
+        if not src_df.empty:
+            fig = px.bar(src_df, x="source", y="tickets", color="source",
+                         color_discrete_map={"lake_streaming": "#fb923c", "lake_batch": "#34d399",
+                                             "glpi_api": "#6366f1", "csv_batch": "#38bdf8"},
+                         title="Tickets par source d'ingestion")
+            st.plotly_chart(dark_fig(fig, height=280), use_container_width=True)
+
+    except Exception as e:
+        st.warning(f"MinIO non disponible : {e}")
+        st.info("Demarrez MinIO : docker compose up -d minio lake-writer")
