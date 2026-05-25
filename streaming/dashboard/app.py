@@ -1508,7 +1508,7 @@ elif page == "🗄️ Data Lake":
                 st.info("Aucun fichier silver. Les DAGs ETL les creent apres chaque traitement.")
 
         st.divider()
-        st.markdown('<div class="sec-label">Tickets dans le DW par chemin d'ingestion</div>', unsafe_allow_html=True)
+        st.markdown("<div class=\"sec-label\">Tickets dans le DW par chemin d'ingestion</div>", unsafe_allow_html=True)
         src_df = query("SELECT source, COUNT(*) AS tickets FROM fact_tickets GROUP BY source ORDER BY tickets DESC")
         if not src_df.empty:
             fig = px.bar(src_df, x="source", y="tickets", color="source",
